@@ -115,13 +115,19 @@ function currentOffset() {
   return ((anim.currentTime % animDuration) / animDuration) * animLoop;
 }
 
+// Scroll speed in text-heights per second. 1–50 is a gentle linear range;
+// above 50 it speeds up twice as fast, so 100 is double the old maximum.
+function speedFactor(speed) {
+  return 0.02 * (speed + 2 * Math.max(0, speed - 50));
+}
+
 function syncScroll(wasScrolling) {
   if (!scrolling || loopHeight <= 0) {
     anim?.cancel();
     anim = null;
     return;
   }
-  const pxPerSec = settings.speed * fs * 0.02;
+  const pxPerSec = speedFactor(settings.speed) * fs;
   const duration = (loopHeight / pxPerSec) * 1000;
   if (anim && Math.abs(animLoop - loopHeight) < 0.01 && Math.abs(animDuration - duration) < 1) return;
 
