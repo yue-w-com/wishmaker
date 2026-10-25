@@ -20,9 +20,11 @@ const MAX_WISHES = 500;
 
 let settings = { ...DEFAULT_SETTINGS };
 let fs = 40;
-let offset = 0;
 let loopHeight = 0;
 let scrolling = false;
+let anim = null; // Web Animation running the loop on the compositor
+let animLoop = 0;
+let animDuration = 0;
 const rows = new Map(); // id -> [elA, elB]
 
 // ---------- layout ----------
@@ -44,9 +46,9 @@ function measure() {
   scrolling = rows.size > 0 && contentHeight > viewport.clientHeight;
   track.classList.toggle("static", !scrolling);
   listB.classList.toggle("hidden", !scrolling);
-  loopHeight = listA.offsetHeight;
-  if (!scrolling || !wasScrolling) offset = 0;
-  else offset %= loopHeight;
+  // Exact (fractional) height so the loop seam doesn't jump.
+  loopHeight = listA.getBoundingClientRect().height;
+  syncScroll(wasScrolling);
   waiting.classList.toggle("hidden", rows.size > 0);
 }
 
@@ -104,22 +106,35 @@ function removeWish(id) {
 
 // ---------- animation ----------
 
-let last = performance.now();
-function frame(now) {
-  const dt = Math.min((now - last) / 1000, 0.1);
-  last = now;
-  if (scrolling && loopHeight > 0) {
-    offset += settings.speed * fs * 0.02 * dt;
-    if (offset >= loopHeight) offset -= loopHeight;
-    // Whole-pixel steps look steadier on interlaced CRTs.
-    const y = settings.oldtv ? Math.round(offset) : offset;
-    track.style.transform = `translate3d(0, ${-y}px, 0)`;
-  } else {
-    track.style.transform = "";
-  }
-  requestAnimationFrame(frame);
+// The loop runs as a linear Web Animation, which the browser plays on the
+// compositor thread: smooth even when the page is busy (new wishes, network).
+// When the list or speed changes, the animation is rebuilt at the same
+// scroll position.
+function currentOffset() {
+  if (!anim || !animDuration) return 0;
+  return ((anim.currentTime % animDuration) / animDuration) * animLoop;
 }
-requestAnimationFrame(frame);
+
+function syncScroll(wasScrolling) {
+  if (!scrolling || loopHeight <= 0) {
+    anim?.cancel();
+    anim = null;
+    return;
+  }
+  const pxPerSec = settings.speed * fs * 0.02;
+  const duration = (loopHeight / pxPerSec) * 1000;
+  if (anim && Math.abs(animLoop - loopHeight) < 0.01 && Math.abs(animDuration - duration) < 1) return;
+
+  const offset = wasScrolling ? currentOffset() % loopHeight : 0;
+  anim?.cancel();
+  anim = track.animate(
+    [{ transform: "translate3d(0, 0, 0)" }, { transform: `translate3d(0, ${-loopHeight}px, 0)` }],
+    { duration, iterations: Infinity, easing: "linear" },
+  );
+  anim.currentTime = (offset / loopHeight) * duration;
+  animLoop = loopHeight;
+  animDuration = duration;
+}
 
 // ---------- decorations ----------
 
