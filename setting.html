@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Captain's Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
+</head>
+<body>
+  <div class="floaties" aria-hidden="true">
+    <span style="top:5%;left:4%">✦</span>
+    <span style="top:14%;right:4%">(๑˃ᴗ˂)ﻭ</span>
+    <span style="bottom:8%;left:4%">⚓︎</span>
+    <span style="bottom:5%;right:6%">☆ﾐ</span>
+  </div>
+
+  <main class="wrap deck">
+    <section class="card">
+      <div style="text-align:center"><span class="badge">Setting</span></div>
+      <h1>(๑•̀ㅂ•́)و✧ Captain's Deck</h1>
+      <p class="sub">Steer the wish screen of Ever Given</p>
+    </section>
+
+    <!-- login -->
+    <section class="card" id="loginCard">
+      <form id="loginForm">
+        <label class="field">
+          <span>Captain's email</span>
+          <input id="email" type="email" required autocomplete="username">
+        </label>
+        <label class="field">
+          <span>Password <span class="kao">(｀・ω・´)ゞ</span></span>
+          <input id="password" type="password" required autocomplete="current-password">
+        </label>
+        <button class="btn block" type="submit" id="loginBtn">Board the ship ⚓︎</button>
+        <div class="msg" id="loginMsg" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <!-- not admin -->
+    <section class="card hidden" id="notAdminCard">
+      <h2 style="margin-top:0">Almost there (・・;)</h2>
+      <p>You are logged in, but this account isn't in the crew list yet. In the Firebase console, open
+        <b>Realtime Database → Data</b> and add <code>admins / &lt;UID&gt; : true</code> with this UID:</p>
+      <code class="uid" id="uid"></code>
+      <button class="btn ghost small" type="button" data-logout style="margin-top:16px">Log out</button>
+    </section>
+
+    <!-- controls -->
+    <div id="panel" class="hidden">
+      <section class="card">
+        <label class="field" style="margin-top:0">
+          <span>Lines on screen <small>(fewer = bigger text)</small></span>
+          <div class="row">
+            <input id="lines" type="range" min="2" max="15" step="1" value="5">
+            <output id="linesOut">5</output>
+          </div>
+        </label>
+
+        <label class="field">
+          <span>Scroll speed <small>(1 = sleepy, 100 = whoosh)</small></span>
+          <div class="row">
+            <input id="speed" type="range" min="1" max="100" step="1" value="30">
+            <output id="speedOut">30</output>
+          </div>
+        </label>
+
+        <button class="btn block" type="button" id="applyBtn">Apply ✧</button>
+        <div class="msg" id="applyMsg" role="status" aria-live="polite"></div>
+        <p class="hint" id="current"></p>
+      </section>
+
+      <section class="card">
+        <div class="stats">
+          <div>Wishes on board<br><strong id="wishCount">0</strong></div>
+          <span class="kao" style="font-size:22px">ฅ^•ﻌ•^ฅ</span>
+        </div>
+        <ul class="wishlist" id="wishList"></ul>
+      </section>
+
+      <section class="card danger">
+        <label class="field" style="margin-top:0"><span>Clear all wishes <span class="kao">(；ﾟДﾟ)</span></span></label>
+        <p class="hint" style="margin-top:0">Removes every wish from the server and the stage. This can't be undone.</p>
+        <button class="btn block" type="button" id="clearBtn">Clear all wishes</button>
+        <div class="msg" id="clearMsg" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="card">
+        <span style="font-weight:800">Quick links</span>
+        <div class="links">
+          <a class="btn ghost small" id="clientLink" href="index.html" target="_blank" rel="noopener">Client ✉</a>
+          <a class="btn ghost small" id="viewerLink" href="viewer.html" target="_blank" rel="noopener">Viewer ☆</a>
+          <button class="btn ghost small" type="button" data-logout>Log out</button>
+        </div>
+      </section>
+    </div>
+
+    <p class="footer">for, ever ・ Captain Oh's control room <span class="kao">(￣^￣)ゞ</span></p>
+  </main>
+
+  <script type="module" src="js/setting.js"></script>
+</body>
+</html>

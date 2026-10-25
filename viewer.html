@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ever Given Viewer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✧</text></svg>">
+</head>
+<body class="viewer">
+  <div class="stage" id="stage">
+    <div id="stars" aria-hidden="true"></div>
+    <span class="corner tl">⚓︎ Ever Given</span>
+    <span class="corner tr">☆ﾐ</span>
+    <span class="corner bl">(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧</span>
+    <span class="corner br">for, ever</span>
+
+    <div class="viewport" id="viewport">
+      <div class="track" id="track">
+        <div class="list" id="listA"></div>
+        <div class="list" id="listB" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div class="waiting" id="waiting">
+      <span class="kao">(｡･ω･｡)ﾉ♡</span>
+      <span>Waiting for wishes...</span>
+      <small>Captain Oh is looking at the stars ✧</small>
+    </div>
+  </div>
+
+  <div class="status hidden" id="status">Reconnecting to the mothership... (；ω；)</div>
+
+  <script type="module" src="js/viewer.js"></script>
+</body>
+</html>
