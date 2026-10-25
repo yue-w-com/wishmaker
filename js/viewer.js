@@ -15,7 +15,7 @@ const listB = document.getElementById("listB");
 const waiting = document.getElementById("waiting");
 const statusEl = document.getElementById("status");
 
-const ROW = 1.3 + 0.5; // line-height + gap between wishes, in em (see .wish)
+const ROW = 1.3 + 0.5; // wish line-height + spacing, in em (sets the text size)
 const MAX_WISHES = 500;
 
 let settings = { ...DEFAULT_SETTINGS };
@@ -37,12 +37,13 @@ function applySize() {
 
 function measure() {
   const wasScrolling = scrolling;
-  // Scroll only when the wishes (without the loop separator) overflow the screen.
-  const contentHeight = listA.offsetHeight - sepA.offsetHeight;
+  // Scroll only when the wishes overflow the screen. In static mode the last
+  // divider is hidden; while looping it separates the last and first wish.
+  track.classList.remove("static");
+  const contentHeight = listA.offsetHeight - (listA.lastElementChild?.querySelector(".divider")?.offsetHeight || 0);
   scrolling = rows.size > 0 && contentHeight > viewport.clientHeight;
   track.classList.toggle("static", !scrolling);
   listB.classList.toggle("hidden", !scrolling);
-  sepA.classList.toggle("hidden", !scrolling);
   loopHeight = listA.offsetHeight;
   if (!scrolling || !wasScrolling) offset = 0;
   else offset %= loopHeight;
@@ -54,30 +55,29 @@ new ResizeObserver(() => measure()).observe(listA);
 
 // ---------- rows ----------
 
-function makeSep() {
-  const s = document.createElement("div");
-  s.className = "loop-sep";
-  s.textContent = "☆ ･ﾟ: * ✧ ･ﾟ: *  ⚓︎  * :ﾟ･ ✧ * :ﾟ･ ☆";
-  return s;
-}
-const sepA = makeSep();
-const sepB = makeSep();
-listA.append(sepA);
-listB.append(sepB);
+// Cute dividers between wishes; picked from the wish id so each wish keeps
+// the same one even when others are deleted.
+const DIVIDERS = ["⚓︎", "(｡•̀ᴗ-)✧", "☆ﾐ", "ฅ^•ﻌ•^ฅ", "✧", "(っ˘ω˘ς)", "⋆｡ﾟ☾", "(ﾉ◕ヮ◕)ﾉ"];
 
-function makeRow(name, wish, fresh) {
+function pickDivider(id) {
+  let h = 0;
+  for (const c of id) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return DIVIDERS[h % DIVIDERS.length];
+}
+
+function makeRow(id, name, wish, fresh) {
   const div = document.createElement("div");
   div.className = fresh ? "wish fresh" : "wish";
-  const n = document.createElement("span");
+  const n = document.createElement("div");
   n.className = "n";
   n.textContent = name;
-  const bar = document.createElement("span");
-  bar.className = "bar";
-  bar.textContent = "|";
-  const w = document.createElement("span");
+  const w = document.createElement("div");
   w.className = "w";
   w.textContent = wish;
-  div.append(n, bar, w);
+  const d = document.createElement("div");
+  d.className = "divider";
+  d.textContent = pickDivider(id);
+  div.append(n, w, d);
   return div;
 }
 
@@ -86,10 +86,10 @@ let initialLoaded = false;
 function addWish(id, { name = "", wish = "" }) {
   if (rows.has(id)) return;
   const fresh = initialLoaded;
-  const a = makeRow(name, wish, fresh);
-  const b = makeRow(name, wish, false);
-  listA.insertBefore(a, sepA);
-  listB.insertBefore(b, sepB);
+  const a = makeRow(id, name, wish, fresh);
+  const b = makeRow(id, name, wish, false);
+  listA.append(a);
+  listB.append(b);
   rows.set(id, [a, b]);
   measure();
 }

@@ -54,9 +54,10 @@ form.addEventListener("submit", async (e) => {
     lastSent = Date.now();
     try { localStorage.setItem("everGivenName", name); } catch {}
     echo.textContent = "";
-    const b = document.createElement("b");
-    b.textContent = name;
-    echo.append(b, ` | ${wish}`);
+    const n = document.createElement("small");
+    n.className = "echo-name";
+    n.textContent = `☆ ${name}`;
+    echo.append(n, wish);
     form.classList.add("hidden");
     done.classList.remove("hidden");
     wishEl.value = "";
