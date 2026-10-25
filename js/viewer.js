@@ -46,8 +46,9 @@ function measure() {
   scrolling = rows.size > 0 && contentHeight > viewport.clientHeight;
   track.classList.toggle("static", !scrolling);
   listB.classList.toggle("hidden", !scrolling);
-  // Exact (fractional) height so the loop seam doesn't jump.
-  loopHeight = listA.getBoundingClientRect().height;
+  // Loop length = exact distance from the first copy to the second, so the
+  // seam lands on the identical spot and doesn't jump.
+  loopHeight = listB.getBoundingClientRect().top - listA.getBoundingClientRect().top;
   syncScroll(wasScrolling);
   waiting.classList.toggle("hidden", rows.size > 0);
 }

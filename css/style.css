@@ -366,7 +366,8 @@ body.viewer {
 .track { position: absolute; left: 0; right: 0; top: 0; will-change: transform; }
 .track.static { top: 50%; transform: translateY(-50%) !important; }
 
-.list { padding: 0 calc(var(--fs) * .7); }
+/* flow-root keeps the last divider's margin inside the list (loop seam). */
+.list { display: flow-root; padding: 0 calc(var(--fs) * .7); }
 
 .wish {
   line-height: 1.3;
