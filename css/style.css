@@ -377,7 +377,7 @@ body.viewer {
 /* Name sits on its own smaller, dimmer line above the wish. */
 .wish .n { font-size: .6em; line-height: 1.4; color: #a8a8a8; }
 
-/* Cute divider after every wish: dotted rope ── kaomoji ── dotted rope.
+/* Cute divider after every wish: thin wave ～ kaomoji ～ thin wave.
    The last one doubles as the seam of the scrolling loop. */
 .divider {
   display: flex;
@@ -388,16 +388,16 @@ body.viewer {
   line-height: 1.3;
   color: #8a8a8a;
   white-space: nowrap;
+  --wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 8'%3E%3Cpath d='M0 4 Q6 0 12 4 T24 4' fill='none' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E");
 }
 .divider::before,
 .divider::after {
   content: "";
   flex: 1;
-  height: .3em;
-  background-image: radial-gradient(circle, currentColor 45%, transparent 50%);
-  background-size: .6em .3em;
-  background-repeat: space no-repeat;
-  background-position: center;
+  height: .4em;
+  background-color: currentColor;
+  -webkit-mask: var(--wave) left center / 1.2em .4em repeat-x;
+  mask: var(--wave) left center / 1.2em .4em repeat-x;
 }
 .track.static .wish:last-child .divider { display: none; }
 
@@ -452,8 +452,10 @@ body.viewer {
 .stage.oldtv .viewport { inset: 12% 9%; }
 .stage.oldtv .wish .n { color: #c4c4c4; }
 .stage.oldtv .divider { color: #b4b4b4; font-size: .5em; }
-.stage.oldtv .divider::before,
-.stage.oldtv .divider::after { height: .4em; background-size: .75em .4em; }
+/* A little thicker so the wave doesn't flicker on interlaced CRTs. */
+.stage.oldtv .divider {
+  --wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 8'%3E%3Cpath d='M0 4 Q6 0 12 4 T24 4' fill='none' stroke='%23000' stroke-width='2.2'/%3E%3C/svg%3E");
+}
 .stage.oldtv #stars { display: none; }
 .stage.oldtv .waiting { inset: 12% 9%; }
 .stage.oldtv .waiting small { color: #b0b0b0; font-weight: 700; }
