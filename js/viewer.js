@@ -28,7 +28,9 @@ const rows = new Map(); // id -> [elA, elB]
 // ---------- layout ----------
 
 function applySize() {
-  fs = stage.clientHeight / (settings.lines * ROW);
+  stage.classList.toggle("oldtv", settings.oldtv);
+  // Old TV mode shrinks the viewport to the CRT safe area, so size from it.
+  fs = viewport.clientHeight / (settings.lines * ROW);
   stage.style.setProperty("--fs", `${fs}px`);
   measure();
 }
@@ -109,7 +111,9 @@ function frame(now) {
   if (scrolling && loopHeight > 0) {
     offset += settings.speed * fs * 0.02 * dt;
     if (offset >= loopHeight) offset -= loopHeight;
-    track.style.transform = `translate3d(0, ${-offset}px, 0)`;
+    // Whole-pixel steps look steadier on interlaced CRTs.
+    const y = settings.oldtv ? Math.round(offset) : offset;
+    track.style.transform = `translate3d(0, ${-y}px, 0)`;
   } else {
     track.style.transform = "";
   }
@@ -157,6 +161,7 @@ if (!CONFIGURED) {
     settings = {
       lines: Number(v.lines) || DEFAULT_SETTINGS.lines,
       speed: Number(v.speed) || DEFAULT_SETTINGS.speed,
+      oldtv: v.oldtv === true,
     };
     applySize();
   });

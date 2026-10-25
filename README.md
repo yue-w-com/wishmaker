@@ -55,6 +55,7 @@ Static site (GitHub Pages) + Firebase Realtime Database (free Spark plan). New w
 - **观众**：把 `…/` 做成二维码贴在剧场里或投影出来。
 - **后台**：手机或电脑打开 `…/setting.html` 并登录：
   - *Lines on screen*：屏幕上大约显示几行字（默认 5；数字越小字越大）
+  - *Old TV mode*：用 60 年代黑白显像管电视播放时打开。四周留出安全边距（老电视会裁掉边缘），文字改为略灰的白并加粗（防止发光晕开），去掉细小星星，并让滚动更稳。用投影仪时关闭。
   - *Scroll speed*：1–100（默认 30）
   - 点 **Apply ✧** 后 Viewer 立即生效；每条愿望旁的 ✕ 可以删除单条（应对不合适的内容）；**Clear all wishes** 一键清空。
 - 愿望少、一屏放得下时静止居中显示；超过一屏时自动循环向上滚动。

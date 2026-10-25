@@ -85,12 +85,14 @@ function startListening() {
   let first = true;
   unsubs.push(onValue(ref(db, "settings"), (snap) => {
     const v = { ...DEFAULT_SETTINGS, ...(snap.val() || {}) };
-    $("current").textContent = `Now on stage: ${v.lines} lines · speed ${v.speed}`;
+    $("current").textContent =
+      `Now on stage: ${v.lines} lines · speed ${v.speed}${v.oldtv ? " · Old TV mode" : ""}`;
     if (first) {
       // Load the live values into the controls once; afterwards don't
       // overwrite what the captain is adjusting.
       linesEl.value = v.lines; $("linesOut").textContent = v.lines;
       speedEl.value = v.speed; $("speedOut").textContent = v.speed;
+      $("oldtv").checked = !!v.oldtv;
       first = false;
     }
   }));
@@ -141,6 +143,7 @@ $("applyBtn").addEventListener("click", async () => {
   const next = {
     lines: clamp(Number(linesEl.value), LIMITS.lines),
     speed: clamp(Number(speedEl.value), LIMITS.speed),
+    oldtv: $("oldtv").checked,
   };
   msg.textContent = "Sending to the stage...";
   try {

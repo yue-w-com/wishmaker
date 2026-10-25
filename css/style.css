@@ -253,6 +253,33 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
 }
 
+label.field.toggle { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.toggle > span { margin-bottom: 0 !important; }
+.toggle input {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: none;
+  position: relative;
+  width: 52px; height: 30px;
+  margin: 0;
+  border: var(--border);
+  border-radius: 999px;
+  background: var(--paper);
+  cursor: pointer;
+  transition: background .15s;
+}
+.toggle input::after {
+  content: "";
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--ink);
+  transition: transform .15s;
+}
+.toggle input:checked { background: var(--ink); }
+.toggle input:checked::after { background: var(--paper); transform: translateX(22px); }
+
 .hint { font-size: 13px; color: var(--mid); margin: 6px 0 0; }
 
 .danger { border-style: dashed; }
@@ -402,6 +429,28 @@ body.viewer {
   z-index: 0;
   animation: twinkle 3s ease-in-out infinite;
 }
+
+/* Old TV mode: CRTs overscan ~5–10% per edge, bloom on pure white and lose
+   thin details, so keep everything inside a safe area and make it bolder. */
+.stage.oldtv { color: #e0e0e0; }
+.stage.oldtv .viewport { inset: 12% 9%; }
+.stage.oldtv .wish .n { font-weight: 800; }
+.stage.oldtv .wish .w { font-weight: 700; }
+.stage.oldtv .wish .bar { color: #bdbdbd; font-weight: 800; }
+.stage.oldtv .loop-sep { color: #a8a8a8; font-weight: 700; }
+.stage.oldtv #stars { display: none; }
+.stage.oldtv .waiting { inset: 12% 9%; }
+.stage.oldtv .waiting small { color: #b0b0b0; font-weight: 700; }
+.stage.oldtv .corner {
+  color: #b0b0b0;
+  font-weight: 700;
+  font-size: max(16px, calc(var(--fs) * .38));
+  padding: 0;
+}
+.stage.oldtv .corner.tl { top: 6%; left: 9%; }
+.stage.oldtv .corner.tr { top: 6%; right: 9%; }
+.stage.oldtv .corner.bl { bottom: 6%; left: 9%; }
+.stage.oldtv .corner.br { bottom: 6%; right: 9%; }
 
 .status {
   position: fixed;

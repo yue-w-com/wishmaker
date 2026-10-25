@@ -38,6 +38,9 @@
       "speed": {
         ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 100"
       },
+      "oldtv": {
+        ".validate": "newData.isBoolean()"
+      },
       "$other": {
         ".validate": false
       }

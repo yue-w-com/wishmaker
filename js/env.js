@@ -20,7 +20,7 @@ export const config = EMULATOR
 
 export const CONFIGURED = EMULATOR || !config.databaseURL.includes("PASTE_");
 
-export const DEFAULT_SETTINGS = { lines: 5, speed: 30 };
+export const DEFAULT_SETTINGS = { lines: 5, speed: 30, oldtv: false };
 export const LIMITS = { lines: [2, 15], speed: [1, 100], name: 40, wish: 200 };
 
 // REST endpoint for a database path (used by the audience page so phones
