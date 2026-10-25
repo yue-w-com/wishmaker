@@ -14,16 +14,21 @@ Static site (GitHub Pages) + Firebase Realtime Database (free Spark plan). New w
 
 ## 一次性设置（约 10 分钟）
 
+> 新版控制台左侧可能没有 "Build" 分组。找不到菜单时，直接用网址进入（把 `<项目ID>` 换成你的项目 ID，即控制台网址中 `/project/` 后面那段），或用顶部搜索框搜索：
+> - 数据库：`https://console.firebase.google.com/project/<项目ID>/database`
+> - 登录/账号：`https://console.firebase.google.com/project/<项目ID>/authentication`
+> - 项目设置：`https://console.firebase.google.com/project/<项目ID>/settings/general`
+
 ### 1. 创建 Firebase 项目
 1. 打开 <https://console.firebase.google.com> → **Add project**（可以关闭 Google Analytics）。
-2. 左侧 **Build → Realtime Database → Create Database**：地区任选（亚洲观众可选 `asia-southeast1`），选择 **Start in locked mode**。
+2. 进入 **Realtime Database**（上面的数据库网址）→ **Create Database**：地区选 `us-central1` 最稳，选择 **Start in locked mode**。
 3. 打开 **Rules** 标签，把本仓库 `database.rules.json` 的全部内容粘贴进去，点 **Publish**。
 
 ### 2. 创建管理员账号（Setting 页面登录用）
-1. **Build → Authentication → Get started → Sign-in method**：启用 **Email/Password**。
+1. 进入 **Authentication**（上面的登录网址）→ **Get started → Sign-in method**：启用 **Email/Password**（只开第一个开关）→ Save。
 2. **Users → Add user**：填入你的邮箱和密码。
-3. 复制这个用户的 **User UID**。
-4. 回到 **Realtime Database → Data**：在根节点点 **+**，添加：
+3. 复制用户列表中这一行的 **User UID**。
+4. 回到 **Realtime Database → Data**：鼠标移到根节点（数据库网址那一行）点 **+**，添加：
    - key: `admins`
    - 在其下添加 key = 你的 UID，value = `true`（布尔值）
 
