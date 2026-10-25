@@ -22,9 +22,6 @@ let settings = { ...DEFAULT_SETTINGS };
 let fs = 40;
 let loopHeight = 0;
 let scrolling = false;
-let anim = null; // Web Animation running the loop on the compositor
-let animLoop = 0;
-let animDuration = 0;
 const rows = new Map(); // id -> [elA, elB]
 
 // ---------- layout ----------
@@ -48,8 +45,9 @@ function measure() {
   listB.classList.toggle("hidden", !scrolling);
   // Loop length = exact distance from the first copy to the second, so the
   // seam lands on the identical spot and doesn't jump.
+  const oldLoop = loopHeight;
   loopHeight = listB.getBoundingClientRect().top - listA.getBoundingClientRect().top;
-  syncScroll(wasScrolling);
+  syncScroll(wasScrolling, oldLoop);
   waiting.classList.toggle("hidden", rows.size > 0);
 }
 
@@ -107,14 +105,24 @@ function removeWish(id) {
 
 // ---------- animation ----------
 
-// The loop runs as a linear Web Animation, which the browser plays on the
-// compositor thread: smooth even when the page is busy (new wishes, network).
-// When the list or speed changes, the animation is rebuilt at the same
-// scroll position.
-function currentOffset() {
-  if (!anim || !animDuration) return 0;
-  return ((anim.currentTime % animDuration) / animDuration) * animLoop;
+// The loop position is set every frame from the clock (not a compositor
+// animation: jumping back to the top there can show one blank frame while
+// the browser repaints the far-away top of the list). Position is derived
+// from elapsed time, so a slow frame never makes the speed drift.
+let baseOffset = 0;
+let baseTime = 0;
+let pxPerSec = 0;
+
+function currentOffset(now = performance.now()) {
+  if (!loopHeight) return 0;
+  return (baseOffset + ((now - baseTime) / 1000) * pxPerSec) % loopHeight;
 }
+
+function frame(now) {
+  track.style.transform = scrolling ? `translate3d(0, ${-currentOffset(now)}px, 0)` : "";
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
 
 // Scroll speed in text-heights per second. 1–50 is a gentle linear range;
 // above 50 it speeds up twice as fast, so 100 is double the old maximum.
@@ -122,25 +130,17 @@ function speedFactor(speed) {
   return 0.02 * (speed + 2 * Math.max(0, speed - 50));
 }
 
-function syncScroll(wasScrolling) {
-  if (!scrolling || loopHeight <= 0) {
-    anim?.cancel();
-    anim = null;
-    return;
+// Called whenever the list, size or speed changes: keep the same on-screen
+// position and continue at the new speed / loop length.
+function syncScroll(wasScrolling, oldLoop) {
+  const now = performance.now();
+  let offset = 0;
+  if (scrolling && wasScrolling && oldLoop > 0) {
+    offset = (baseOffset + ((now - baseTime) / 1000) * pxPerSec) % oldLoop;
   }
-  const pxPerSec = speedFactor(settings.speed) * fs;
-  const duration = (loopHeight / pxPerSec) * 1000;
-  if (anim && Math.abs(animLoop - loopHeight) < 0.01 && Math.abs(animDuration - duration) < 1) return;
-
-  const offset = wasScrolling ? currentOffset() % loopHeight : 0;
-  anim?.cancel();
-  anim = track.animate(
-    [{ transform: "translate3d(0, 0, 0)" }, { transform: `translate3d(0, ${-loopHeight}px, 0)` }],
-    { duration, iterations: Infinity, easing: "linear" },
-  );
-  anim.currentTime = (offset / loopHeight) * duration;
-  animLoop = loopHeight;
-  animDuration = duration;
+  baseOffset = loopHeight > 0 ? offset % loopHeight : 0;
+  baseTime = now;
+  pxPerSec = speedFactor(settings.speed) * fs;
 }
 
 // ---------- decorations ----------
